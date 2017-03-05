@@ -21,6 +21,7 @@
 #include "Camera.h"
 #include "Plane.h"
 #include "Cube.h"
+#include "Light.h"
 
 
 // Function prototypes
@@ -32,12 +33,13 @@ void move_camera();
 GLuint loadTexture(GLchar * path, GLboolean alpha);
 Cube* createCube();
 Plane* createPlane();
+Light* createLight();
 
 // Window dimensions
 const GLuint WIDTH = 1600, HEIGHT = 900;
 
 // Camera setup
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 7.0f));
 bool keys[1024];
 
 // Balance velocity of camera
@@ -59,8 +61,8 @@ int main()
 	Cube* cube = createCube();
 	cube->buildAndCompileShader("shaders/shader.vs", "shaders/shader.frag");
 	cube->prepare(1);	// 1 ... vertices
-	cube->positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-	cube->multiplyObject(glm::vec3(-150.0f, 10.0f, -150.0f), 1000, 10.0f);
+	cube->positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f));		// positions array holds 1 vec3 for each object which should be created
+	cube->multiplyObject(glm::vec3(-150.0f, 10.0f, -150.0f), 1000, 10.0f);		// creates n objects @ a certain start position (2d)
 	cube->multiplyObject(glm::vec3(-150.0f, 20.0f, -150.0f), 1000, 10.0f);
 	cube->multiplyObject(glm::vec3(-150.0f, -10.0f, -150.0f), 1000, 10.0f);
 	cube->multiplyObject(glm::vec3(-150.0f, -20.0f, -150.0f), 1000, 10.0f);
@@ -75,6 +77,13 @@ int main()
 	GLfloat plane_color[] = { 0.1f, 0.5f, 0.1f, 0.3f };
 	plane->setColor(plane_color);
 	
+	// Prepare Light source
+	Light* light = createLight();
+	light->buildAndCompileShader("shaders/light.vs", "shaders/light.frag");
+	light->prepare(1);
+	light->positions.push_back(glm::vec3(0.0f, 3.0f, 1.0f));
+	GLfloat light_color[] = { 1.0f, 1.0f, 1.0f };
+	light->setColor(light_color);
 
 	// Game loop
 	while (!glfwWindowShouldClose(window))
@@ -108,12 +117,17 @@ int main()
 		plane->activateShader(view, projection);
 		plane->sortAndDraw(camera, false);
 
+		// draw light source
+		light->activateShader(view, projection);
+		light->draw(camera, false);
+
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
 	}
 
 	delete cube;
 	delete plane;
+	delete light;
 	
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
@@ -301,4 +315,57 @@ Plane* createPlane()
 										  sizeof(planeIndices));
 
 	return plane;
+}
+
+Light* createLight()
+{
+	// 6 faces * 2 triangles * 3 vertices each
+	GLfloat lightVertices[] = {
+		//Position		
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f
+	};
+
+	Light* light = new Light(lightVertices, sizeof(lightVertices));
+
+	return light;
 }

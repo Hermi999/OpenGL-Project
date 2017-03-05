@@ -124,7 +124,7 @@ public:
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 			if (color != NULL) {
-				glUniform4fv(glGetUniformLocation((*shader).Program, "inColor"), 1, color);
+				glUniform3fv(glGetUniformLocation((*shader).Program, "inColor"), 1, color);
 			}
 
 			if (type == 0) {
@@ -184,15 +184,6 @@ protected:
 		return sortedObjects;
 	}
 
-private:
-	void init(GLfloat _vertices[], size_t _sizeof_vertices)
-	{
-		size_t array_size = _sizeof_vertices / sizeof(GLfloat);
-		vertices = new GLfloat[array_size];
-		memcpy(vertices, _vertices, _sizeof_vertices);
-		sizeof_vertices = _sizeof_vertices;
-	}
-	
 	void prepareTriangles()
 	{
 		glGenVertexArrays(1, &VAO);
@@ -224,6 +215,14 @@ private:
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(1);
 		glBindVertexArray(0); // Unbind cubeVAO
+	}
+
+	void init(GLfloat _vertices[], size_t _sizeof_vertices)
+	{
+		size_t array_size = _sizeof_vertices / sizeof(GLfloat);
+		vertices = new GLfloat[array_size];
+		memcpy(vertices, _vertices, _sizeof_vertices);
+		sizeof_vertices = _sizeof_vertices;
 	}
 	
 	void levelOfDetail(Camera camera, glm::vec3 pos) {
