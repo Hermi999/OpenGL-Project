@@ -34,7 +34,7 @@ Cube* createCube();
 Plane* createPlane();
 
 // Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
+const GLuint WIDTH = 1600, HEIGHT = 900;
 
 // Camera setup
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -60,9 +60,10 @@ int main()
 	cube->buildAndCompileShader("shaders/shader.vs", "shaders/shader.frag");
 	cube->prepare(1);	// 1 ... vertices
 	cube->positions.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-	cube->positions.push_back(glm::vec3(1.0f, 0.0f, -2.0f));
-	cube->positions.push_back(glm::vec3(2.0f, 0.0f, -4.0f));
-	cube->positions.push_back(glm::vec3(3.0f, 0.0f, -6.0f));
+	cube->multiplyObject(glm::vec3(-150.0f, 10.0f, -150.0f), 1000, 10.0f);
+	cube->multiplyObject(glm::vec3(-150.0f, 20.0f, -150.0f), 1000, 10.0f);
+	cube->multiplyObject(glm::vec3(-150.0f, -10.0f, -150.0f), 1000, 10.0f);
+	cube->multiplyObject(glm::vec3(-150.0f, -20.0f, -150.0f), 1000, 10.0f);
 	cube->texture = loadTexture("textures/04pietrac4.png", false);
 
 	// Prepare PLANES
@@ -71,7 +72,7 @@ int main()
 	plane->prepare(0);	// 0 ... triangles
 	plane->positions.push_back(glm::vec3(2.0f, 0.0f, 0.0f));
 	plane->positions.push_back(glm::vec3(3.0f, 0.0f, -0.5f));
-	GLfloat plane_color[] = { 0.5f, 0.5f, 0.5f, 0.5f };
+	GLfloat plane_color[] = { 0.1f, 0.5f, 0.1f, 0.3f };
 	plane->setColor(plane_color);
 	
 

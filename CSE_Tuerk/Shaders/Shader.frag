@@ -10,5 +10,5 @@ uniform sampler2D cubeTexture;
 void main()
 {
 	// Linearly interpolate between both textures (second texture is only slightly combined)
-	color = texture(cubeTexture, TexCoord); // * vec4(ourColor, 1.0f);
+	color = texture(cubeTexture, TexCoord) * vec4(ourColor, 1.0f);
 }

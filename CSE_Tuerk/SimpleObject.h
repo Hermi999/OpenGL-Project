@@ -60,6 +60,19 @@ public:
 		memcpy(color, _color, 4*sizeof(GLfloat));
 	}
 
+	void multiplyObject(glm::vec3 startpos, int count, GLfloat delta)
+	{
+		int length = pow(count, 1/2.0);
+		for (int i = 0; i < length; i++) {
+			for (int j = 0; j < length; j++) {
+				GLfloat x = startpos.x + i*delta;
+				GLfloat y = startpos.y;// + j*delta;
+				GLfloat z = startpos.z + j*delta;
+				positions.push_back(glm::vec3(x, y, z));
+			}
+		}
+	}
+
 	void buildAndCompileShader(char vs[], char frag[])
 	{
 		shader = new Shader(vs, frag);
@@ -215,17 +228,17 @@ private:
 	
 	void levelOfDetail(Camera camera, glm::vec3 pos) {
 		GLfloat lod = glm::length(camera.Position - pos);
-		if (lod < 200) {
-			GLfloat _color1[] = { 0.5f, 0.0f, 0.0f };
-			glUniform4fv(glGetUniformLocation((*shader).Program, "colorLOD"), 1, _color1);
+		if (lod < 20) {
+			GLfloat _color1[] = { 1.0f, 236./255., 179/255. };
+			glUniform3fv(glGetUniformLocation((*shader).Program, "colorLOD"), 1, _color1);
 		}
-		else if (lod < 400) {
-			GLfloat _color2[] = { 0.0f, 0.5f, 0.0f };
-			glUniform4fv(glGetUniformLocation((*shader).Program, "colorLOD"), 1, _color2);
+		else if (lod < 40) {
+			GLfloat _color2[] = { 1.0f, 193./255., 7./255. };
+			glUniform3fv(glGetUniformLocation((*shader).Program, "colorLOD"), 1, _color2);
 		}
 		else {
-			GLfloat _color3[] = { 0.0f, 0.0f, 0.5f };
-			glUniform4fv(glGetUniformLocation((*shader).Program, "colorLOD"), 1, _color3);
+			GLfloat _color3[] = { 1.0f, 111./255., 0.0f  };
+			glUniform3fv(glGetUniformLocation((*shader).Program, "colorLOD"), 1, _color3);
 		}
 	}
 };
